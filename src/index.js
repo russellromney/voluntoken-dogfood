@@ -3,7 +3,7 @@ export function parseTaskReference(input) {
     throw new TypeError("task reference must be a string");
   }
 
-  const match = input.trim().match(/^([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+)#(\d+)$/);
+  const match = input.trim().match(/^([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+)\s*#\s*(\d+)$/);
   if (!match) return null;
 
   return {

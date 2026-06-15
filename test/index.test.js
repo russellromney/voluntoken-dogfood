@@ -10,6 +10,19 @@ test("parses owner/repo task references", () => {
   });
 });
 
+test("parses task references with spaces around #", () => {
+  assert.deepEqual(parseTaskReference("russellromney/voluntoken-dogfood # 12"), {
+    owner: "russellromney",
+    repo: "voluntoken-dogfood",
+    number: 12
+  });
+  assert.deepEqual(parseTaskReference("russellromney/voluntoken-dogfood #12"), {
+    owner: "russellromney",
+    repo: "voluntoken-dogfood",
+    number: 12
+  });
+});
+
 test("returns null for invalid task references", () => {
   assert.equal(parseTaskReference("voluntoken-dogfood#12"), null);
   assert.equal(parseTaskReference("russellromney/voluntoken-dogfood"), null);
