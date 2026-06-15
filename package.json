@@ -1,0 +1,15 @@
+{
+  "name": "voluntoken-dogfood",
+  "version": "0.1.0",
+  "private": false,
+  "type": "module",
+  "description": "Small public repository for dogfooding Voluntoken task flows.",
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}
+
