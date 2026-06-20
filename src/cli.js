@@ -3,7 +3,9 @@ import { parseTaskReference, summarizeSubmission } from "./index.js";
 
 const usage = `Usage:
   voluntoken-dogfood parse-ref <reference>
-  voluntoken-dogfood summarize --summary <text> --commit <sha> --tests <output> [--risks <text>]`;
+  voluntoken-dogfood summarize --summary <text> --commit <sha> --tests <output> [--risks <text>]
+  voluntoken-dogfood summarize --json --summary <text> --commit <sha> --tests <output> [--risks <text>]
+  voluntoken-dogfood examples`;
 
 function main(args) {
   const [command, ...rest] = args;
@@ -14,6 +16,10 @@ function main(args) {
 
   if (command === "summarize") {
     return summarize(rest);
+  }
+
+  if (command === "examples") {
+    return examples(rest);
   }
 
   return fail(`Unknown command: ${command ?? "(none)"}\n${usage}`);
@@ -40,14 +46,29 @@ function summarize(args) {
   }
 
   try {
-    console.log(
-      summarizeSubmission({
-        summary: flags.values.summary,
-        commitSha: flags.values.commit,
-        tests: flags.values.tests,
-        risks: flags.values.risks
-      })
-    );
+    const summary = summarizeSubmission({
+      summary: flags.values.summary,
+      commitSha: flags.values.commit,
+      tests: flags.values.tests,
+      risks: flags.values.risks
+    });
+
+    if (flags.values.json) {
+      console.log(
+        JSON.stringify(
+          {
+            summary: flags.values.summary.trim(),
+            commit: flags.values.commit.trim(),
+            tests: flags.values.tests.trim(),
+            risks: (flags.values.risks ?? "").trim()
+          },
+          null,
+          2
+        )
+      );
+    } else {
+      console.log(summary);
+    }
   } catch (error) {
     return fail(error.message);
   }
@@ -55,11 +76,34 @@ function summarize(args) {
   return 0;
 }
 
+function examples(args) {
+  if (args.length !== 0) {
+    return fail(`examples does not accept arguments.\n${usage}`);
+  }
+
+  console.log(
+    [
+      "russellromney/voluntoken-dogfood #5",
+      "openai/codex #42",
+      "voluntoken/voluntoken #108",
+      'voluntoken-dogfood summarize --summary "Added CLI examples." --commit abc123 --tests "npm test" --risks "Low risk."'
+    ].join("\n")
+  );
+  return 0;
+}
+
 function parseFlags(args) {
   const values = {};
 
-  for (let index = 0; index < args.length; index += 2) {
+  for (let index = 0; index < args.length;) {
     const flag = args[index];
+
+    if (flag === "--json") {
+      values.json = true;
+      index += 1;
+      continue;
+    }
+
     const value = args[index + 1];
 
     if (!["--summary", "--commit", "--tests", "--risks"].includes(flag)) {
@@ -71,6 +115,7 @@ function parseFlags(args) {
     }
 
     values[flag.slice(2)] = value;
+    index += 2;
   }
 
   return { values };

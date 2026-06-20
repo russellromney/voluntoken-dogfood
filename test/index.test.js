@@ -100,11 +100,56 @@ test("CLI summarize prints submission summary", () => {
   assert.equal(result.stderr, "");
 });
 
+test("CLI summarize --json prints structured summary JSON", () => {
+  const result = runCli([
+    "summarize",
+    "--json",
+    "--summary",
+    "Added JSON mode.",
+    "--commit",
+    "abc123",
+    "--tests",
+    "npm test",
+    "--risks",
+    "Low risk."
+  ]);
+
+  assert.equal(result.status, 0);
+  assert.deepEqual(JSON.parse(result.stdout), {
+    summary: "Added JSON mode.",
+    commit: "abc123",
+    tests: "npm test",
+    risks: "Low risk."
+  });
+  assert.equal(result.stderr, "");
+});
+
 test("CLI summarize exits non-zero when required args are missing", () => {
   const result = runCli(["summarize", "--summary", "Added CLI.", "--commit", "abc123"]);
 
   assert.notEqual(result.status, 0);
   assert.match(result.stderr, /test output is required/);
+});
+
+test("CLI summarize --json exits non-zero when required args are missing", () => {
+  const result = runCli(["summarize", "--json", "--summary", "Added JSON mode.", "--commit", "abc123"]);
+
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /test output is required/);
+});
+
+test("CLI examples prints task references and summarize command", () => {
+  const result = runCli(["examples"]);
+  const lines = result.stdout.trim().split("\n");
+
+  assert.equal(result.status, 0);
+  assert.deepEqual(lines, [
+    "russellromney/voluntoken-dogfood #5",
+    "openai/codex #42",
+    "voluntoken/voluntoken #108",
+    'voluntoken-dogfood summarize --summary "Added CLI examples." --commit abc123 --tests "npm test" --risks "Low risk."'
+  ]);
+  assert.equal(result.stderr, "");
 });
 
 function runCli(args) {
