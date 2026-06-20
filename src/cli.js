@@ -4,6 +4,7 @@ import { parseTaskReference, summarizeSubmission } from "./index.js";
 const usage = `Usage:
   voluntoken-dogfood parse-ref <reference>
   voluntoken-dogfood summarize --summary <text> --commit <sha> --tests <output> [--risks <text>]
+  voluntoken-dogfood summarize --json --summary <text> --commit <sha> --tests <output> [--risks <text>]
   voluntoken-dogfood examples`;
 
 function main(args) {
@@ -45,14 +46,29 @@ function summarize(args) {
   }
 
   try {
-    console.log(
-      summarizeSubmission({
-        summary: flags.values.summary,
-        commitSha: flags.values.commit,
-        tests: flags.values.tests,
-        risks: flags.values.risks
-      })
-    );
+    const summary = summarizeSubmission({
+      summary: flags.values.summary,
+      commitSha: flags.values.commit,
+      tests: flags.values.tests,
+      risks: flags.values.risks
+    });
+
+    if (flags.values.json) {
+      console.log(
+        JSON.stringify(
+          {
+            summary: flags.values.summary.trim(),
+            commit: flags.values.commit.trim(),
+            tests: flags.values.tests.trim(),
+            risks: (flags.values.risks ?? "").trim()
+          },
+          null,
+          2
+        )
+      );
+    } else {
+      console.log(summary);
+    }
   } catch (error) {
     return fail(error.message);
   }
@@ -79,8 +95,15 @@ function examples(args) {
 function parseFlags(args) {
   const values = {};
 
-  for (let index = 0; index < args.length; index += 2) {
+  for (let index = 0; index < args.length;) {
     const flag = args[index];
+
+    if (flag === "--json") {
+      values.json = true;
+      index += 1;
+      continue;
+    }
+
     const value = args[index + 1];
 
     if (!["--summary", "--commit", "--tests", "--risks"].includes(flag)) {
@@ -92,6 +115,7 @@ function parseFlags(args) {
     }
 
     values[flag.slice(2)] = value;
+    index += 2;
   }
 
   return { values };

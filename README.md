@@ -22,6 +22,12 @@ npx voluntoken-dogfood summarize \
   --commit abc123 \
   --tests "npm test" \
   --risks "Low risk."
+
+npx voluntoken-dogfood summarize --json \
+  --summary "Added parser coverage." \
+  --commit abc123 \
+  --tests "npm test" \
+  --risks "Low risk."
 ```
 
 ## Dogfood Task Ideas
