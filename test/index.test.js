@@ -10,6 +10,17 @@ test("parses owner/repo task references", () => {
   });
 });
 
+test("parses owner/repo task references with whitespace around the marker", () => {
+  const expected = {
+    owner: "russellromney",
+    repo: "voluntoken-dogfood",
+    number: 12
+  };
+
+  assert.deepEqual(parseTaskReference("russellromney/voluntoken-dogfood #12"), expected);
+  assert.deepEqual(parseTaskReference("russellromney/voluntoken-dogfood   #   12"), expected);
+});
+
 test("returns null for invalid task references", () => {
   assert.equal(parseTaskReference("voluntoken-dogfood#12"), null);
   assert.equal(parseTaskReference("russellromney/voluntoken-dogfood"), null);
@@ -39,4 +50,3 @@ test("formats submission summaries", () => {
     ].join("\n")
   );
 });
-
