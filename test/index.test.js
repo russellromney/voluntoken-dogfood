@@ -107,6 +107,20 @@ test("CLI summarize exits non-zero when required args are missing", () => {
   assert.match(result.stderr, /test output is required/);
 });
 
+test("CLI examples prints task references and summarize command", () => {
+  const result = runCli(["examples"]);
+  const lines = result.stdout.trim().split("\n");
+
+  assert.equal(result.status, 0);
+  assert.deepEqual(lines, [
+    "russellromney/voluntoken-dogfood #5",
+    "openai/codex #42",
+    "voluntoken/voluntoken #108",
+    'voluntoken-dogfood summarize --summary "Added CLI examples." --commit abc123 --tests "npm test" --risks "Low risk."'
+  ]);
+  assert.equal(result.stderr, "");
+});
+
 function runCli(args) {
   return spawnSync(process.execPath, [cliPath, ...args], {
     encoding: "utf8"

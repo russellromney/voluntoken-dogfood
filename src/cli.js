@@ -3,7 +3,8 @@ import { parseTaskReference, summarizeSubmission } from "./index.js";
 
 const usage = `Usage:
   voluntoken-dogfood parse-ref <reference>
-  voluntoken-dogfood summarize --summary <text> --commit <sha> --tests <output> [--risks <text>]`;
+  voluntoken-dogfood summarize --summary <text> --commit <sha> --tests <output> [--risks <text>]
+  voluntoken-dogfood examples`;
 
 function main(args) {
   const [command, ...rest] = args;
@@ -14,6 +15,10 @@ function main(args) {
 
   if (command === "summarize") {
     return summarize(rest);
+  }
+
+  if (command === "examples") {
+    return examples(rest);
   }
 
   return fail(`Unknown command: ${command ?? "(none)"}\n${usage}`);
@@ -52,6 +57,22 @@ function summarize(args) {
     return fail(error.message);
   }
 
+  return 0;
+}
+
+function examples(args) {
+  if (args.length !== 0) {
+    return fail(`examples does not accept arguments.\n${usage}`);
+  }
+
+  console.log(
+    [
+      "russellromney/voluntoken-dogfood #5",
+      "openai/codex #42",
+      "voluntoken/voluntoken #108",
+      'voluntoken-dogfood summarize --summary "Added CLI examples." --commit abc123 --tests "npm test" --risks "Low risk."'
+    ].join("\n")
+  );
   return 0;
 }
 

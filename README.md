@@ -15,6 +15,8 @@ npm test
 ```bash
 npx voluntoken-dogfood parse-ref "russellromney/voluntoken-dogfood #12"
 
+npx voluntoken-dogfood examples
+
 npx voluntoken-dogfood summarize \
   --summary "Added parser coverage." \
   --commit abc123 \
