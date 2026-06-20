@@ -4,6 +4,9 @@
   "private": false,
   "type": "module",
   "description": "Small public repository for dogfooding Voluntoken task flows.",
+  "bin": {
+    "voluntoken-dogfood": "./src/cli.js"
+  },
   "scripts": {
     "test": "node --test"
   },
@@ -12,4 +15,3 @@
   },
   "license": "MIT"
 }
-

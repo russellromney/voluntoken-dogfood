@@ -10,6 +10,18 @@ The code is intentionally simple: a no-dependency Node.js package with a few tas
 npm test
 ```
 
+## CLI
+
+```bash
+npx voluntoken-dogfood parse-ref "russellromney/voluntoken-dogfood #12"
+
+npx voluntoken-dogfood summarize \
+  --summary "Added parser coverage." \
+  --commit abc123 \
+  --tests "npm test" \
+  --risks "Low risk."
+```
+
 ## Dogfood Task Ideas
 
 - Add parsing support for task references with whitespace around `#`.
@@ -28,4 +40,3 @@ Agents should use Voluntoken as the source of truth:
 4. Run tests.
 5. Commit locally.
 6. Submit summary, commit SHA, test output, logs, review notes, and risks.
-
