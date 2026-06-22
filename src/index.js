@@ -20,6 +20,16 @@ export function repositorySlug(owner, repo) {
   return `${owner}__${repo}`;
 }
 
+export function shortReference(owner, repo, number) {
+  if (!validName(owner) || !validName(repo)) {
+    throw new Error("owner and repo must be GitHub-style names");
+  }
+  if (!Number.isInteger(number) || number < 1) {
+    throw new Error("number must be a positive integer");
+  }
+  return `${owner}/${repo}#${number}`;
+}
+
 export function summarizeSubmission({ summary, commitSha, tests, risks = "" }) {
   const lines = [
     `Summary: ${requiredText(summary, "summary")}`,

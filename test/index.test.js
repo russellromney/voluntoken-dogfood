@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
-import { parseTaskReference, repositorySlug, summarizeSubmission } from "../src/index.js";
+import { parseTaskReference, repositorySlug, shortReference, summarizeSubmission } from "../src/index.js";
 
 const cliPath = fileURLToPath(new URL("../src/cli.js", import.meta.url));
 
@@ -36,6 +36,28 @@ test("builds repository slugs", () => {
 
 test("rejects invalid slug parts", () => {
   assert.throws(() => repositorySlug("russell romney", "voluntoken-dogfood"), /GitHub-style/);
+});
+
+test("formats short references and round-trips with parseTaskReference", () => {
+  assert.equal(shortReference("a", "b", 12), "a/b#12");
+
+  const ref = shortReference("russellromney", "voluntoken-dogfood", 7);
+  assert.deepEqual(parseTaskReference(ref), {
+    owner: "russellromney",
+    repo: "voluntoken-dogfood",
+    number: 7
+  });
+});
+
+test("shortReference rejects invalid names", () => {
+  assert.throws(() => shortReference("russell romney", "voluntoken-dogfood", 1), /GitHub-style/);
+  assert.throws(() => shortReference("russellromney", "bad repo", 1), /GitHub-style/);
+});
+
+test("shortReference rejects non-positive or non-integer numbers", () => {
+  assert.throws(() => shortReference("a", "b", 0), /positive integer/);
+  assert.throws(() => shortReference("a", "b", -3), /positive integer/);
+  assert.throws(() => shortReference("a", "b", 1.5), /positive integer/);
 });
 
 test("formats submission summaries", () => {
